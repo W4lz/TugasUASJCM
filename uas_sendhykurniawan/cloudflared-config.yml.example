@@ -1,0 +1,66 @@
+# Cloudflared Configuration Template
+# Rename this file to: cloudflared-config.yml
+# Replace <TUNNEL-ID> and domain names with your actual values
+
+tunnel: mini-games
+credentials-file: /etc/cloudflared/credentials.json
+
+# Logging level: debug, info, warn, error
+logLevel: info
+
+# Timeout for outbound connections
+defaultUpstreamDialTimeout: 30s
+
+# HTTP timeout
+httpHostHeader: localhost:8080
+
+# Ingress rules - order matters, first match wins
+ingress:
+  # Rule 1: Mini Games Hub main domain
+  - hostname: mini-games.yourdomain.com
+    service: http://web:8080
+    path: /
+  
+  # Rule 2: www subdomain
+  - hostname: www.mini-games.yourdomain.com
+    service: http://web:8080
+    path: /
+  
+  # Rule 3: Main domain (optional)
+  - hostname: yourdomain.com
+    service: http://web:8080
+    path: /
+  
+  # Rule 4: Catch-all - return 404 for any other domain
+  - service: http_status:404
+
+# Optional: Origin request customization
+originRequest:
+  connectTimeout: 30s
+  tlsTimeout: 10s
+  tcpKeepAlive: 30s
+  noHappyEyeballs: false
+  keepAliveConnections: 100
+  keepAliveTimeout: 90s
+  http2Origin: false
+  http2ReadTimeout: 0s
+  http2WriteTimeout: 0s
+  
+  # Custom headers sent to origin
+  headers:
+    add:
+      X-Forwarded-For: "true"
+      X-Frame-Options: "SAMEORIGIN"
+      X-Content-Type-Options: "nosniff"
+      X-XSS-Protection: "1; mode=block"
+  
+  # Origin server certificate validation
+  disableH2CUpgrade: false
+  bastion: false
+
+# Optional: Proxy settings (if behind corporate proxy)
+# proxyUrl: http://proxy.example.com:8080
+
+# Optional: WARPing (Client VPN integration)
+# warp-routing:
+#   enabled: true

@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  aisuitgame:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aisuitgame
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - TZ=Asia/Jakarta
+    restart: unless-stopped
+    networks:
+      - aisuitgame-network
+
+networks:
+  aisuitgame-network:
+    driver: bridge
